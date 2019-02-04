@@ -10,7 +10,7 @@ void setup() {
 void draw() {
   background(100);
   ps.addParticle();
-  PVector gravity = new PVector(0,0.05);
+  PVector gravity = new PVector(0,0.3);
   ps.applyForce(gravity);
   ps.applyRepeller(repeller);
  
@@ -59,7 +59,7 @@ class ParticleSystem {
  
 class Repeller {
  
-  float strength = 100;
+  float strength = 500;
   PVector location;
   float r = 10;
  
