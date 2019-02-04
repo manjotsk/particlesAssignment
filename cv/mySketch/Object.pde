@@ -35,7 +35,7 @@ class Object {
       return object2.line.judgeCollision(ball);
     } else if (character == 'l' && object2.character == 'b') {
       return line.judgeCollision(object2.ball);
-    } else { //if (character == 'l' && object2.character == 'l') 선과 선은 충돌처리를 하지 않는다.
+    } else { //if (character == 'l' && object2.character == 'l')
       return false;
     }
   }

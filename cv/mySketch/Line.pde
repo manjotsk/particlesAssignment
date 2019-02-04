@@ -1,9 +1,7 @@
 class Line {
   PVector start;
   PVector end;
-  //선의 시작점에서 끝점으로 가는 벡터입니다.
   PVector se;
-  //벡터 se를 단위벡터화한 후 반시계방향으로 90도 회전해 선에 직각인 단위벡터를 만듭니다.
   PVector normalUnit;
   
   Line(PVector s, PVector e) {

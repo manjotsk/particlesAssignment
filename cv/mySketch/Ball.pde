@@ -7,10 +7,8 @@ class Ball {
 
   PVector previousPos;
   color c;
-  //추가: 동시 충돌일 때 extraTime 위치 조정시 한번만 위치 조정되도록 하기 위해
   boolean forSameCount;
 
-  //180807 파도효과
   boolean whiteWave;
 
   Ball(float m_, PVector pos_, PVector vel_, color c_) {

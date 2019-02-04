@@ -5,20 +5,16 @@ class CollisionSystem {
   ArrayList<ArrayList<Object>> groupCollisionObjects;
   ArrayList<ArrayList<ArrayList<Object>>> finalGroup;
 
-  //추가: 중력 적용
   PVector g;
 
-  //추가: 충돌알고리즘의 반복 적용
   boolean repeat;
   float repeatThreshold;
 
-  //180807 해변 땅 색칠하기
   ArrayList<PVector> ground;
 
   CollisionSystem() {
     g = new PVector(0, 0.1);
 
-    //180807 해변 땅 색칠하기
     ground = new ArrayList<PVector>();
 
     initiateObject();
@@ -28,13 +24,11 @@ class CollisionSystem {
     finalGroup = new ArrayList<ArrayList<ArrayList<Object>>>();
 
     repeat = true;
-    //충돌 개수가 repeatThreshold보다 작으면 충돌 알고리즘 반복을 마친다.
     repeatThreshold = 5;
   }
 
   void initiateObject() {
     objects = new ArrayList<Object>();
-    //공 생성
     generateBalls1();
     generateLines();
   }
@@ -60,7 +54,6 @@ class CollisionSystem {
   }
   
   void generateLines() {
-    //선 생성
     objects.add(new Object(new PVector(-500, height-30), new PVector(150, height-60), 1));
     objects.add(new Object(new PVector(150, height-60), new PVector(270, height-50), 2));  
     objects.add(new Object(new PVector(270, height-50), new PVector(400, height-30), 3));
@@ -71,7 +64,6 @@ class CollisionSystem {
     objects.add(new Object(new PVector(800, height/2+100), new PVector(870, height/2+70), 8));
     objects.add(new Object(new PVector(870, height/2+70), new PVector(1000, height/2+60), 9));
 
-    //180807 해변 땅 색칠하기
     ground.add(new PVector(-500, height-30));
     ground.add(new PVector(150, height-60));
     ground.add(new PVector(270, height-50));
@@ -98,21 +90,15 @@ class CollisionSystem {
       object.display();
     }
 
-    //180807 해변 땅 색칠하기
     groundDisplay();
 
-    //180808
-    //약 10초마다 새 파도를 만든다.
     if (frameCount % 620 == 0) {
       CSystem.generateBalls2();
     }    
-    //180808
-    //화면을 벗어나면 공을 삭제한다.
     CSystem.deleteOutBall();
 
   }
 
-  //180807 해변 땅 색칠하기
   void groundDisplay() {
     fill(232, 216, 187, 200);
     beginShape();
@@ -125,15 +111,11 @@ class CollisionSystem {
 
   void collisionAlgorithm() {
     repeat = true;
-    //추가: repeat이 true면 충돌알고리즘이 반복적으로 적용된다.
     while (repeat == true) {
-      //충돌 그룹 생성
       generateCollisionSetBalls();
 
-      //충돌 알고리즘 적용
       applyCollisionAlgorithm();
 
-      //ArrayList 초기화
       clearArrayList();
     }
   }
@@ -161,7 +143,6 @@ class CollisionSystem {
       }
     }
 
-    //추가: repeatThreshold보다 작아지면 반복을 멈추고 다음 턴으로 넘어간다.
     if (listCollisionTwoObjects.size() < repeatThreshold) {
       repeat = false;
     } else {
@@ -185,7 +166,7 @@ class CollisionSystem {
               objects1.remove(j);
               objects2.addAll(objects1);
               groupCollisionObjects.remove(i);
-              l = 0;//루프에서 벗어나기 위해
+              l = 0;
               k = 0;
               j = 0;
             }
@@ -230,13 +211,6 @@ class CollisionSystem {
           if (o1.judgeCollision(o2)) {
 
             Time time = calTimeForOnePointOfCollision(o1, o2);
-            //추가: 
-            //t값은 임의의 최소와 최대 사이로 설정한다.
-            //여러 입자들의 충돌이 겹치다 보니 이 사이값 밖의 값이 계산될 수도 있다.
-            //하지만 이런 경우는 t로 인한 변화가 너무 크다고 판단되어(잘못되면 선을 뚫고 지나간다)
-            //충돌처리를 하지않고(리스트에서 제거) 다음 충돌 처리로 미루어
-            //안정된 충돌 처리를 구현한다.
-            //수많은 입자들이 충돌하므로 이런 미룸이 필요하다고 생각된다.
             if (time.t >= -6 && time.t <= 6) {
               timeForOnePointOfCollision.add(time);
             } else {
@@ -248,7 +222,6 @@ class CollisionSystem {
         }
 
         if (!timeForOnePointOfCollision.isEmpty()) {
-          // 위 for구문이 거꾸로기 때문에
           reverseArrayList(timeForOnePointOfCollision);          
           int indexOfTimeMin = getMinIndex(timeForOnePointOfCollision);
 
@@ -617,8 +590,8 @@ class CollisionSystem {
         PVector tangent = PVector.sub(o1.ball.vel, normal);
 
         normal.mult(-1);
-        normal.mult(0.8);//추가: 점과 충돌하면 점의 normal 방향의의 직각 방향의 속도를 20% 감소시킨다
-        //processingjs
+        normal.mult(0.8);
+        
         normal.add(tangent);
         o1.ball.vel = normal.get();
       }
@@ -633,13 +606,13 @@ class CollisionSystem {
 
         float n = -1 * o2.ball.vel.dot(o1.line.l.normalUnit);
         PVector normalVel = PVector.mult(o1.line.l.normalUnit, n);
-        PVector dampingNormalVel = PVector.mult(normalVel, 0.8);//추가: 선과 충돌하면 선의 normal 방향의 속도를 20% 감소시킨다
+        PVector dampingNormalVel = PVector.mult(normalVel, 0.8);
         normalVel.add(dampingNormalVel);//damping
         //processingjs
         normalVel.add(o2.ball.vel);
         o2.ball.vel = normalVel.get();
       } 
-      //점과의 충돌이었으면
+      
       else if (tMin.c == 1 || tMin.c == 2) {
 
         PVector dir;
@@ -666,18 +639,14 @@ class CollisionSystem {
   void setRePositionForExtraTime(Object o1, Object o2, float extraTime) {
 
     if (o1.character == 'b') {
-      //추가: 동시 충돌일 때 반복 적용되지 않도록
       if (o1.ball.forSameCount == false) {
         o1.ball.pos.add(PVector.mult(o1.ball.vel, extraTime));
-        //마치 이 위치에서 온것처럼 다룬다.  
         o1.ball.previousPos = PVector.sub(o1.ball.pos, o1.ball.vel);
       }
     }
     if (o2.character == 'b') {
-      //추가: 동시 충돌일 때 반복 적용되지 않도록
       if (o2.ball.forSameCount == false) {
         o2.ball.pos.add(PVector.mult(o2.ball.vel, extraTime));
-        //마치 이 위치에서 온것처럼 다룬다.    
         o2.ball.previousPos = PVector.sub(o2.ball.pos, o2.ball.vel);
       }
     }
@@ -689,7 +658,6 @@ class CollisionSystem {
     finalGroup.clear();
   }
 
-  //180808
   void deleteOutBall() {
     for (int i = objects.size()-1; i >= 0; i--) {
       Object object = objects.get(i);
